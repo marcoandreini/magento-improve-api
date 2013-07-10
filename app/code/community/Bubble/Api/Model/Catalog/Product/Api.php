@@ -65,5 +65,57 @@ class Bubble_Api_Model_Catalog_Product_Api extends Mage_Catalog_Model_Product_Ap
             $configurableAttributes = isset($productData['configurable_attributes']) ? $productData['configurable_attributes'] : array();
             Mage::helper('bubble_api/catalog_product')->associateProducts($product, $simpleSkus, $priceChanges, $configurableAttributes);
         }
+        if (isset($productData['images'])) {
+            $images = $productData['images'];
+            $this->_addImages($product, $images);
+        }
+    }
+
+    protected function _addImages(Mage_Catalog_Model_Product $product, $images)
+    {
+        $gallery = $this->_getGalleryAttribute($product);
+
+        if (!empty($images)) {
+            foreach($images as $data) {
+                if (isset($data['filename']) && $data['filename']) {
+                    $fileName  = $data['filename'];
+                } else {
+                    $this->_fault('data_invalid', Mage::helper('catalog')->__('Missing file name.'));
+                }
+                // Adding image to gallery
+                $file = $gallery->getBackend()->addImage(
+                    $product,
+                    $fileName,
+                    null,
+                    false
+                );
+                $gallery->getBackend()->updateImage($product, $file, $data);
+
+                if (isset($data['types'])) {
+                    $gallery->getBackend()->setMediaAttribute($product, $data['types'], $file);
+                }
+            }
+            //$product->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retrieve gallery attribute from product
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param Mage_Catalog_Model_Resource_Eav_Mysql4_Attribute|boolean
+     */
+    protected function _getGalleryAttribute($product)
+    {
+        $attributes = $product->getTypeInstance(true)
+            ->getSetAttributes($product);
+
+        if (!isset($attributes[Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE])) {
+            $this->_fault('not_media');
+        }
+
+        return $attributes[Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE];
     }
 }
