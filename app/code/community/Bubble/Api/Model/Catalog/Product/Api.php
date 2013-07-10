@@ -10,6 +10,18 @@ class Bubble_Api_Model_Catalog_Product_Api extends Mage_Catalog_Model_Product_Ap
         }
 
         return parent::create($type, $set, $sku, $productData, $store);
+
+        //check if all simples are associated
+        if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            $newProduct = Mage::getModel('catalog/product')->load($ret);
+
+            if(count($productData['associated_skus']) != count($newProduct->getConfigurableProductsData()))
+            {
+                $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
+                    $newProduct->getConfigurableProductsData());
+                $this->_fault('data_invalid', $error);
+            }
+        }
     }
 
     protected function _prepareDataForSave($product, $productData)
