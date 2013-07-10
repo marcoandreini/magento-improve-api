@@ -9,7 +9,7 @@ class Bubble_Api_Model_Catalog_Product_Api extends Mage_Catalog_Model_Product_Ap
             $set = Mage::helper('bubble_api')->getAttributeSetIdByName($set);
         }
 
-        return parent::create($type, $set, $sku, $productData, $store);
+        $ret = parent::create($type, $set, $sku, $productData, $store);
 
         //check if all simples are associated
         if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
@@ -22,6 +22,8 @@ class Bubble_Api_Model_Catalog_Product_Api extends Mage_Catalog_Model_Product_Ap
                 $this->_fault('data_invalid', $error);
             }
         }
+
+        return $ret;
     }
 
     protected function _prepareDataForSave($product, $productData)
