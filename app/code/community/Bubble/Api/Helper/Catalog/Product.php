@@ -177,4 +177,52 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
 
         return $this;
     }
+
+    public function addImages(Mage_Catalog_Model_Product $product, $images)
+    {
+        $gallery = $this->_getGalleryAttribute($product);
+
+        if (!empty($images)) {
+            foreach($images as $data) {
+                if (isset($data['filename']) && $data['filename']) {
+                    $fileName  = $data['filename'];
+                } else {
+                    throw new Mage_Api_Exception('data_invalid', Mage::helper('catalog')->__('Missing file name.'));
+                }
+                // Adding image to gallery
+                $file = $gallery->getBackend()->addImage(
+                    $product,
+                    $fileName,
+                    null,
+                    false
+                );
+                $gallery->getBackend()->updateImage($product, $file, $data);
+
+                if (isset($data['types'])) {
+                    $gallery->getBackend()->setMediaAttribute($product, $data['types'], $file);
+                }
+            }
+            //$product->save();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retrieve gallery attribute from product
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @param Mage_Catalog_Model_Resource_Eav_Mysql4_Attribute|boolean
+     */
+    protected function _getGalleryAttribute($product)
+    {
+        $attributes = $product->getTypeInstance(true)
+            ->getSetAttributes($product);
+
+        if (!isset($attributes[Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE])) {
+            throw new Mage_Api_Exception('not_media');
+        }
+
+        return $attributes[Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE];
+    }
 }

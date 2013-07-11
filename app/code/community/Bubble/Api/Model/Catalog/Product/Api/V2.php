@@ -9,7 +9,21 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
             $set = Mage::helper('bubble_api')->getAttributeSetIdByName($set);
         }
 
-        return parent::create($type, $set, $sku, $productData, $store);
+        $ret = parent::create($type, $set, $sku, $productData, $store);
+
+        //check if all simples are associated
+        if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            $newProduct = Mage::getModel('catalog/product')->load($ret);
+
+            if(count($productData['associated_skus']) != count($newProduct->getConfigurableProductsData()))
+            {
+                $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
+                    $newProduct->getConfigurableProductsData());
+                $this->_fault('data_invalid', $error);
+            }
+        }
+
+        return $ret;
     }
 
     protected function _prepareDataForSave($product, $productData)
@@ -82,6 +96,11 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
                 $configurableAttributes = $productData->configurable_attributes;
             }
             Mage::helper('bubble_api/catalog_product')->associateProducts($product, $simpleSkus, $priceChanges, $configurableAttributes);
+
+            if (property_exists($productData, 'images')) {
+                $images = $productData->images;
+                Mage::helper('bubble_api/catalog_product')->addImages($product, $images);
+            }
         }
     }
 }
