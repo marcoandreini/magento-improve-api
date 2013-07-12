@@ -184,6 +184,9 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
 
         if (!empty($images)) {
             foreach($images as $data) {
+                if (is_object($data)) {
+                    $data = get_object_vars($data);
+                }
                 if (isset($data['filename']) && $data['filename']) {
                     $fileName  = $data['filename'];
                 } else {
