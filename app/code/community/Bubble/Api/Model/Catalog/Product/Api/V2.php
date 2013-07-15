@@ -15,12 +15,16 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
         if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
             $newProduct = Mage::getModel('catalog/product')->load($ret);
 
-            if(count($productData['associated_skus']) != count($newProduct->getConfigurableProductsData()))
-            {
-                $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
-                    $newProduct->getConfigurableProductsData());
-                $this->_fault('data_invalid', $error);
+            if(property_exists($productData, 'associated_skus')) {
+                $simpleSkus = (array) $productData->associated_skus;
+                if(count($simpleSkus) != count($newProduct->getTypeInstance()->getUsedProductIds()))
+                {
+                  $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
+                      $newProduct->getConfigurableProductsData());
+                  $this->_fault('data_invalid', $error);
+                }
             }
+
         }
 
         return $ret;

@@ -15,7 +15,7 @@ class Bubble_Api_Model_Catalog_Product_Api extends Mage_Catalog_Model_Product_Ap
         if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
             $newProduct = Mage::getModel('catalog/product')->load($ret);
 
-            if(count($productData['associated_skus']) != count($newProduct->getConfigurableProductsData()))
+            if(count($productData['associated_skus']) != count($newProduct->getTypeInstance()->getUsedProductIds()))
             {
                 $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
                     $newProduct->getConfigurableProductsData());
