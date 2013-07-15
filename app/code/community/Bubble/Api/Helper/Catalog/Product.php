@@ -132,7 +132,7 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
             $productType->setUsedProductAttributeIds($attributeIds);
             $attributesData = $productType->getConfigurableAttributesAsArray();
         }
-        if (!empty($configurableAttributes)){
+        if (!empty($configurableAttributes) && is_array($configurableAttributes)){
             foreach ($attributesData as $idx => $val) {
                 if (!in_array($val['attribute_id'], $configurableAttributes)) {
                     unset($attributesData[$idx]);
