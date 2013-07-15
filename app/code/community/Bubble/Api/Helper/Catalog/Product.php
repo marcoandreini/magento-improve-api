@@ -180,7 +180,9 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
 
     public function addImages(Mage_Catalog_Model_Product $product, $images)
     {
-        $gallery = $this->_getGalleryAttribute($product);
+        $galleryBackendModel = $this->_getGalleryAttribute($product)->getBackend();
+
+        $this->_removeAllImages($product);
 
         if (!empty($images)) {
             foreach($images as $data) {
@@ -193,19 +195,18 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
                     throw new Mage_Api_Exception('data_invalid', Mage::helper('catalog')->__('Missing file name.'));
                 }
                 // Adding image to gallery
-                $file = $gallery->getBackend()->addImage(
+                $file = $galleryBackendModel->addImage(
                     $product,
                     $fileName,
                     null,
                     false
                 );
-                $gallery->getBackend()->updateImage($product, $file, $data);
+                $galleryBackendModel->updateImage($product, $file, $data);
 
                 if (isset($data['types'])) {
-                    $gallery->getBackend()->setMediaAttribute($product, $data['types'], $file);
+                    $galleryBackendModel->setMediaAttribute($product, $data['types'], $file);
                 }
             }
-            //$product->save();
         }
 
         return $this;
@@ -227,5 +228,21 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
         }
 
         return $attributes[Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE];
+    }
+
+    protected function _removeAllImages($product)
+    {
+        $mediaGalleryData = $product->getData(Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE);
+
+        if (!isset($mediaGalleryData['images']) || !is_array($mediaGalleryData['images'])) {
+            return $this;
+        }
+
+        $galleryBackendModel = $this->_getGalleryAttribute($product)->getBackend();
+
+        foreach ($mediaGalleryData['images'] as &$image) {
+            $image['removed'] = 1;
+        }
+        $product->setData(Mage_Catalog_Model_Product_Attribute_Media_Api::ATTRIBUTE_CODE, $mediaGalleryData);
     }
 }
