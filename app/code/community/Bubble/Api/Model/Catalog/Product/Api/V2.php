@@ -12,9 +12,8 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
         $ret = parent::create($type, $set, $sku, $productData, $store);
 
         //check if all simples are associated
+        $newProduct = Mage::getModel('catalog/product')->load($ret);
         if($type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
-            $newProduct = Mage::getModel('catalog/product')->load($ret);
-
             if(property_exists($productData, 'associated_skus')) {
                 $simpleSkus = (array) $productData->associated_skus;
                 if(count($simpleSkus) != count($newProduct->getTypeInstance()->getUsedProductIds()))
@@ -25,6 +24,40 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
                 }
             }
 
+        }
+
+        //set visibilities after product was saved
+        if (property_exists($productData, 'store_visibility')) {
+            $storeVisibility = (array)$productData->store_visibility;
+            Mage::helper('bubble_api/catalog_product')->setStoreVisibility($newProduct, $storeVisibility);
+        }
+
+        return $ret;
+    }
+
+    public function update($productId, $productData, $store = null, $identifierType = null)
+    {
+        $ret = parent::update($productId, $productData, $store, $identifierType);
+
+        //check if all simples are associated
+        $product = $this->_getProduct($productId, $store, $identifierType);
+
+        if($product->getType() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            if(property_exists($productData, 'associated_skus')) {
+                $simpleSkus = (array) $productData->associated_skus;
+                if(count($simpleSkus) != count($product->getTypeInstance()->getUsedProductIds()))
+                {
+                    $error = Mage::helper('bubble_api/catalog_product')->__('Not all products associated! Associated products: %s',
+                        $product->getConfigurableProductsData());
+                    $this->_fault('data_invalid', $error);
+                }
+            }
+        }
+
+        //set visibilities after product was saved
+        if (property_exists($productData, 'store_visibility')) {
+            $storeVisibility = (array)$productData->store_visibility;
+            Mage::helper('bubble_api/catalog_product')->setStoreVisibility($product, $storeVisibility);
         }
 
         return $ret;

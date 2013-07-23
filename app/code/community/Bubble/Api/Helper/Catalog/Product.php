@@ -212,6 +212,19 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
         return $this;
     }
 
+    public function setStoreVisibility(Mage_Catalog_Model_Product $product, $storeVisibility)
+    {
+        $oldStoreId = $product->getStoreId();
+        foreach($storeVisibility as $data) {
+            if (is_object($data)) {
+                $data = get_object_vars($data);
+            }
+            $product->setStoreId($data['store_id'])->setVisibility($data['visibility']);
+            $product->getResource()->saveAttribute($product, 'visibility');
+        }
+        $product->setStoreId($oldStoreId);
+    }
+
     /**
      * Retrieve gallery attribute from product
      *
