@@ -42,7 +42,7 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
         //check if all simples are associated
         $product = $this->_getProduct($productId, $store, $identifierType);
 
-        if($product->getType() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+        if($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
             if(property_exists($productData, 'associated_skus')) {
                 $simpleSkus = (array) $productData->associated_skus;
                 if(count($simpleSkus) != count($product->getTypeInstance()->getUsedProductIds()))
