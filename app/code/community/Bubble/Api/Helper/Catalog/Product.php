@@ -18,12 +18,13 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
                 ->addFieldToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
                 ->getAllIds();
 
-            $oldProductIds = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
+            /*$oldProductIds = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
                 ->addAttributeToSelect('*')
                 ->addFilterByRequiredOptions()
                 ->getAllIds();
 
-            $usedProductIds = array_diff($newProductIds, $oldProductIds);
+            $usedProductIds = array_diff($newProductIds, $oldProductIds);*/
+            $usedProductIds = $newProductIds;
 
             if (!empty($usedProductIds)) {
                 if ($product->isConfigurable()) {
@@ -140,7 +141,7 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
             }
         }
 
-        $products = Mage::getModel('catalog/product')->getCollection()
+            $products = Mage::getModel('catalog/product')->getCollection()
             ->addIdFilter($simpleProductIds);
 
         if (count($products)) {
