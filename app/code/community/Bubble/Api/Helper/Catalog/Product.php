@@ -10,7 +10,7 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
      * @param array $priceChanges
      * @return Bubble_Api_Helper_Catalog_Product
      */
-    public function associateProducts(Mage_Catalog_Model_Product $product, $simpleSkus, $priceChanges = array(), $configurableAttributes = array())
+    public function associateProducts(Mage_Catalog_Model_Product $product, $simpleSkus, $priceChanges = array(), $configurableAttributes = array(), $add = False)
     {
         if (!empty($simpleSkus)) {
             $newProductIds = Mage::getModel('catalog/product')->getCollection()
@@ -18,13 +18,15 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
                 ->addFieldToFilter('type_id', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE)
                 ->getAllIds();
 
-            /*$oldProductIds = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
-                ->addAttributeToSelect('*')
-                ->addFilterByRequiredOptions()
-                ->getAllIds();
-
-            $usedProductIds = array_diff($newProductIds, $oldProductIds);*/
-            $usedProductIds = $newProductIds;
+            if ($add) {
+                $oldProductIds = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
+                    ->addAttributeToSelect('*')
+                    ->addFilterByRequiredOptions()
+                    ->getAllIds();
+                $usedProductIds = array_merge($newProductIds, $oldProductIds);*/
+            } else {
+                $usedProductIds = $newProductIds;
+            }
 
             if (!empty($usedProductIds)) {
                 if ($product->isConfigurable()) {

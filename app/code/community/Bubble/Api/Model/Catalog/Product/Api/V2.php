@@ -132,8 +132,24 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
             if (property_exists($productData, 'configurable_attributes')) {
                 $configurableAttributes = $productData->configurable_attributes;
             }
-            Mage::helper('bubble_api/catalog_product')->associateProducts($product, $simpleSkus, $priceChanges, $configurableAttributes);
+            Mage::helper('bubble_api/catalog_product')->associateProducts($product, $simpleSkus, $priceChanges, $configurableAttributes, False);
+        } elseif (property_exists($productData, 'add_associated_skus')) {
+            $simpleSkus = (array) $productData->associated_skus;
+            $priceChanges = array();
+            if (property_exists($productData, 'price_changes')) {
+                if (key($productData->price_changes) === 0) {
+                    $priceChanges = $productData->price_changes[0];
+                } else {
+                    $priceChanges = $productData->price_changes;
+                }
+            }
+            $configurableAttributes = array();
+            if (property_exists($productData, 'configurable_attributes')) {
+                $configurableAttributes = $productData->configurable_attributes;
+            }
+            Mage::helper('bubble_api/catalog_product')->associateProducts($product, $simpleSkus, $priceChanges, $configurableAttributes, True);
         }
+
         if (property_exists($productData, 'images')) {
             $images = (array)$productData->images;
             Mage::helper('bubble_api/catalog_product')->addImages($product, $images);
