@@ -23,9 +23,9 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
                     ->addAttributeToSelect('*')
                     ->addFilterByRequiredOptions()
                     ->getAllIds();
-                $usedProductIds = array_merge($newProductIds, $oldProductIds);
+                $usedProductIds = array_unique(array_merge($newProductIds, $oldProductIds));
             } else {
-                $usedProductIds = $newProductIds;
+                $usedProductIds = array_unique($newProductIds);
             }
 
             if (!empty($usedProductIds)) {
