@@ -89,16 +89,6 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
      */
     public function getOptionKeyByLabel($attributeCode, $label)
     {
-        $attribute = Mage::getModel('catalog/product')->getResource()
-            ->getAttribute($attributeCode);
-        if ($attribute && $attribute->getId() && $attribute->usesSource()) {
-            foreach ($attribute->getSource()->getAllOptions(true, true) as $option) {
-                if ($label == $option['label']) {
-                    return $option['value'];
-                }
-            }
-        }
-
         return $label;
     }
 
