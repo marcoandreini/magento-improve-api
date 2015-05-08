@@ -2,6 +2,42 @@
 
 class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product_Api_V2
 {
+ 	/**
+     * Retrieve product info
+     *
+     * @param int|string $productId
+     * @param string|int $store
+     * @param stdClass   $attributes
+     * @param string     $identifierType
+     * @return array
+     */
+    public function info($productId, $store = null, $attributes = null, $identifierType = null) {
+		// make sku flag case-insensitive
+        if (!empty($identifierType)) {
+            $identifierType = strtolower($identifierType);
+        }
+
+        $product = $this->_getProduct($productId, $store, $identifierType);
+
+        $result = parent::info($productId, $store, $attributes, $identifierType);
+
+		$childrenId = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
+			->addAttributeToSelect('*')
+			->addFilterByRequiredOptions()
+			->getAllIds();
+
+		$children = Mage::getModel('catalog/product')
+			->getCollection()
+			->addAttributeToFilter('entity_id', array('in' => $childrenId));
+
+		$childrenSkus = array();
+		foreach($children as $child) {
+			 $childrenSkus[] = $child->getSku();
+		}
+		$result['associated_skus'] = $childrenSkus;
+		return $result;
+	}
+
     public function create($type, $set, $sku, $productData, $store = null)
     {
         // Allow attribute set name instead of id
