@@ -108,6 +108,18 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
         if (!$mainProduct->isConfigurable() || empty($simpleProductIds)) {
             return $this;
         }
+        
+        /* block added to prevent exception "Cannot use object of type stdClass as array" */
+        if(is_object($priceChanges))
+        {
+            $tmp = array();
+            $attributeCode = $priceChanges->key;
+            foreach($priceChanges->value AS $optionText)
+            {
+                $tmp[$attributeCode][$optionText->key] = $optionText->value;
+            }
+            $priceChanges = $tmp;
+        }
 
         $mainProduct->setConfigurableProductsData(array_flip($simpleProductIds));
         $productType = $mainProduct->getTypeInstance(true);
