@@ -31,7 +31,7 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
             if (!empty($newProductIds) && $product->isConfigurable()) {
                 $this->_initConfigurableAttributesData($product, $newProductIds, $priceChanges, $configurableAttributes);
             }
-            
+
             if (!empty($usedProductIds) && $product->isGrouped()) {
                 $relations = array_fill_keys($usedProductIds, array('qty' => 0, 'position' => 0));
                 $product->setGroupedLinkData($relations);
@@ -108,18 +108,18 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
         if (!$mainProduct->isConfigurable() || empty($simpleProductIds)) {
             return $this;
         }
-        
-        /* block added to prevent exception "Cannot use object of type stdClass as array" */
-        if(is_object($priceChanges))
-        {
-            $tmp = array();
-            $attributeCode = $priceChanges->key;
-            foreach($priceChanges->value AS $optionText)
-            {
-                $tmp[$attributeCode][$optionText->key] = $optionText->value;
-            }
-            $priceChanges = $tmp;
+
+        $decoded = array();
+        foreach ($priceChanges as $item) {
+        	$attributeCode = $item->key;
+        	$optionText = $item->value->key;
+        	$priceChange = $item->value->value;
+        	if (!isset($decoded[$attributeCode])) {
+        		$decoded[$attributeCode] = array();
+        	}
+        	$decoded[$attributeCode][$optionText] = $priceChange;
         }
+        $priceChanges = $decoded;
 
         $mainProduct->setConfigurableProductsData(array_flip($simpleProductIds));
         $productType = $mainProduct->getTypeInstance(true);
@@ -145,7 +145,7 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
             }
         }
 
-            $products = Mage::getModel('catalog/product')->getCollection()
+	    $products = Mage::getModel('catalog/product')->getCollection()
             ->addIdFilter($simpleProductIds);
 
         if (count($products)) {

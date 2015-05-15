@@ -12,6 +12,7 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
      * @return array
      */
     public function info($productId, $store = null, $attributes = null, $identifierType = null) {
+
 		// make sku flag case-insensitive
         if (!empty($identifierType)) {
             $identifierType = strtolower($identifierType);
@@ -73,7 +74,10 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
 
     public function update($productId, $productData, $store = null, $identifierType = null)
     {
-        $ret = parent::update($productId, $productData, $store, $identifierType);
+
+    	Mage::log('update called = '. $productId, null, 'ikom.log');
+
+    	$ret = parent::update($productId, $productData, $store, $identifierType);
 
         //check if all simples are associated
         $product = $this->_getProduct($productId, $store, $identifierType);
@@ -103,7 +107,7 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
     {
         /* @var $product Mage_Catalog_Model_Product */
 
-        if (property_exists($productData, 'categories')) {
+    	if (property_exists($productData, 'categories')) {
             $categoryIds = Mage::helper('bubble_api/catalog_product')
                 ->getCategoryIdsByNames((array) $productData->categories);
             if (!empty($categoryIds)) {
@@ -158,10 +162,10 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
             $simpleSkus = (array) $productData->associated_skus;
             $priceChanges = array();
             if (property_exists($productData, 'price_changes')) {
-                if (key($productData->price_changes) === 0) {
-                    $priceChanges = $productData->price_changes[0];
+                if (key($productData->price_changes) != 0) {
+                    $priceChanges = array($productData->price_changes);
                 } else {
-                    $priceChanges = $productData->price_changes;
+                	$priceChanges = $productData->price_changes;
                 }
             }
             $configurableAttributes = array();
@@ -173,8 +177,8 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
             $simpleSkus = (array) $productData->add_associated_skus;
             $priceChanges = array();
             if (property_exists($productData, 'price_changes')) {
-                if (key($productData->price_changes) === 0) {
-                    $priceChanges = $productData->price_changes[0];
+                if (key($productData->price_changes) != 0) {
+                    $priceChanges = array($productData->price_changes);
                 } else {
                     $priceChanges = $productData->price_changes;
                 }
