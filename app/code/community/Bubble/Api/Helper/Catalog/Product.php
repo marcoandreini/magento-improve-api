@@ -121,6 +121,8 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
         		$decoded[$attributeCode][$optionText] = $priceChange;
         	}
         	$priceChanges = $decoded;
+        } else {
+        	$priceChanges = json_decode(json_encode($priceChanges), true);
         }
 
         $mainProduct->setConfigurableProductsData(array_flip($simpleProductIds));
