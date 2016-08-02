@@ -109,17 +109,19 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
             return $this;
         }
 
-        $decoded = array();
-        foreach ($priceChanges as $item) {
-        	$attributeCode = $item->key;
-        	$optionText = $item->value->key;
-        	$priceChange = $item->value->value;
-        	if (!isset($decoded[$attributeCode])) {
-        		$decoded[$attributeCode] = array();
+        if (!Mage::helper('api/data')->isComplianceWSI()) {
+        	$decoded = array();
+	        foreach ($priceChanges as $item) {
+	        	$attributeCode = $item->key;
+        		$optionText = $item->value->key;
+        		$priceChange = $item->value->value;
+        		if (!isset($decoded[$attributeCode])) {
+        			$decoded[$attributeCode] = array();
+        		}
+        		$decoded[$attributeCode][$optionText] = $priceChange;
         	}
-        	$decoded[$attributeCode][$optionText] = $priceChange;
+        	$priceChanges = $decoded;
         }
-        $priceChanges = $decoded;
 
         $mainProduct->setConfigurableProductsData(array_flip($simpleProductIds));
         $productType = $mainProduct->getTypeInstance(true);
