@@ -36,6 +36,14 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
 			 $childrenSkus[] = $child->getSku();
 		}
 		$result['associated_skus'] = $childrenSkus;
+		
+       	$res = array();
+        if ($product->isConfigurable()) {
+        	foreach ($product->getTypeInstance()->getConfigurableAttributes($product) as $attribute) {
+        		$res[] = $attribute->getProductAttribute()->getAttributeCode();
+        	}
+        }
+        $result['configurable_attributes'] = $res;
 		return $result;
 	}
 
@@ -74,8 +82,6 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
 
     public function update($productId, $productData, $store = null, $identifierType = null)
     {
-
-    	Mage::log('update called = '. $productId, null, 'ikom.log');
 
     	$ret = parent::update($productId, $productData, $store, $identifierType);
 
