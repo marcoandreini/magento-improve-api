@@ -162,15 +162,11 @@ class Bubble_Api_Helper_Catalog_Product extends Mage_Core_Helper_Abstract
                     $isPercent = 0;
                     $priceChange = 0;
                     if (!empty($priceChanges) && isset($priceChanges[$attributeCode])) {
-                        $optionText = $product->getResource()
-                            ->getAttribute($attribute['attribute_code'])
-                            ->getSource()
-                            ->getOptionText($optionId);
-                        if (isset($priceChanges[$attributeCode][$optionText])) {
-                            if (false !== strpos($priceChanges[$attributeCode][$optionText], '%')) {
+                        if (isset($priceChanges[$attributeCode][$optionId])) {
+                            if (false !== strpos($priceChanges[$attributeCode][$optionId], '%')) {
                                 $isPercent = 1;
                             }
-                            $priceChange = preg_replace('/[^0-9\.,-]/', '', $priceChanges[$attributeCode][$optionText]);
+                            $priceChange = preg_replace('/[^0-9\.,-]/', '', $priceChanges[$attributeCode][$optionId]);
                             $priceChange = (float) str_replace(',', '.', $priceChange);
                         }
                     }
