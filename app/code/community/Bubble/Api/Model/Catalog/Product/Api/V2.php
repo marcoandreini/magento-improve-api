@@ -36,14 +36,33 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
 			 $childrenSkus[] = $child->getSku();
 		}
 		$result['associated_skus'] = $childrenSkus;
-		
-       	$res = array();
+
+       	$confAttrs = array();
+	   	$priceChanges = array();
         if ($product->isConfigurable()) {
+
         	foreach ($product->getTypeInstance()->getConfigurableAttributes($product) as $attribute) {
-        		$res[] = $attribute->getProductAttribute()->getAttributeCode();
+        		$confAttrs[] = $attribute->getProductAttribute()->getAttributeCode();
+        	}
+
+        	$attributesData = $product->getTypeInstance()->getConfigurableAttributesAsArray();
+        	foreach ($attributesData as &$attribute) {
+        		$attributeCode = $attribute['attribute_code'];
+        		$changes = array();
+        		foreach($attribute['values'] as $value) {
+        			$price = $value['pricing_value'];
+        			if ($price) {
+	        			$optionId = $value['value_index'];
+        				$changes[] = array(key => $optionId,
+        						'value' => '' . $price .($value['is_percent'] ? '%' :''));
+        			}
+        		}
+				$priceChanges[] = array('key' => $attributeCode,
+						'value' => $changes);
         	}
         }
-        $result['configurable_attributes'] = $res;
+        $result['configurable_attributes'] = $confAttrs;
+	   	$result['price_changes'] = $priceChanges;
 		return $result;
 	}
 
