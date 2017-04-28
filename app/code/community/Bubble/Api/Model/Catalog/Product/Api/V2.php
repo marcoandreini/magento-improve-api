@@ -21,16 +21,41 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
         $product = $this->_getProduct($productId, $store, $identifierType);
 
         $result = parent::info($productId, $store, $attributes, $identifierType);
-
-		$childrenId = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
-			->addAttributeToSelect('*')
-			->addFilterByRequiredOptions()
-			->getAllIds();
-
+      
+        if($product->getTypeId() == "bundle"){
+     
+        	
+        	$childrenId = array();
+        	$bundles = $product->getTypeInstance(true)
+        			->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), $product);
+        	$bundle_optionId = array();
+        	$is_default_number = 0;
+        	foreach($bundles as $option)
+        		{
+        			$_optionId = $option->option_id;
+        			if (!( in_array($_optionId, $bundle_optionId) )) {
+        				$bundle_optionId[] = $_optionId;
+        			}
+        			if($option->is_default == 1){
+        				$childrenId[] = $option->product_id;
+        				$is_default_number ++;
+        			}
+        		}
+        	if($is_default_number < sizeof($bundle_optionId)){
+        		/*Una opzione del bundle non ha item di default*/
+        		$childrenId = [];
+        	}	
+        }
+        else{
+			$childrenId = Mage::getModel('catalog/product_type_configurable')->setProduct($product)->getUsedProductCollection()
+					->addAttributeToSelect('*')
+					->addFilterByRequiredOptions()
+					->getAllIds();
+        }
 		$children = Mage::getModel('catalog/product')
 			->getCollection()
 			->addAttributeToFilter('entity_id', array('in' => $childrenId));
-
+		
 		$childrenSkus = array();
 		foreach($children as $child) {
 			 $childrenSkus[] = $child->getSku();
@@ -39,6 +64,7 @@ class Bubble_Api_Model_Catalog_Product_Api_V2 extends Mage_Catalog_Model_Product
 
        	$confAttrs = array();
 	   	$priceChanges = array();
+
         if ($product->isConfigurable()) {
 
         	foreach ($product->getTypeInstance()->getConfigurableAttributes($product) as $attribute) {
