@@ -21,6 +21,12 @@
                     <product_api_v2>Bubble_Api_Model_Catalog_Product_Api_V2</product_api_v2>
                 </rewrite>
             </catalog>
+            <sales>
+                <rewrite>
+                    <order_api>Bubble_Api_Model_Sales_Order_Api</order_api>
+                    <order_api_v2>Bubble_Api_Model_Sales_Order_Api_V2</order_api_v2>
+                </rewrite>
+            </sales>
         </models>
         <blocks>
             <bubble_api>

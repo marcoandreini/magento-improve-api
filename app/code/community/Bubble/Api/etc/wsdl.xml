@@ -8,50 +8,52 @@
         <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
              <complexType name="catalogProductReturnEntity">
                 <all>
-                    <element name="product_id" type="xsd:string" minOccurs="0"/>
-                    <element name="sku" type="xsd:string" minOccurs="0"/>
-                    <element name="set" type="xsd:string" minOccurs="0"/>
-                    <element name="type" type="xsd:string" minOccurs="0"/>
+                    <element name="product_id" type="string" minOccurs="0"/>
+                    <element name="sku" type="string" minOccurs="0"/>
+                    <element name="set" type="string" minOccurs="0"/>
+                    <element name="type" type="string" minOccurs="0"/>
                     <element name="categories" type="typens:ArrayOfString" minOccurs="0"/>
                     <element name="websites" type="typens:ArrayOfString" minOccurs="0"/>
-                    <element name="created_at" type="xsd:string" minOccurs="0"/>
-                    <element name="updated_at" type="xsd:string" minOccurs="0"/>
-                    <element name="type_id" type="xsd:string" minOccurs="0"/>
-                    <element name="name" type="xsd:string" minOccurs="0"/>
-                    <element name="description" type="xsd:string" minOccurs="0"/>
-                    <element name="short_description" type="xsd:string" minOccurs="0"/>
-                    <element name="weight" type="xsd:string" minOccurs="0"/>
-                    <element name="status" type="xsd:string" minOccurs="0"/>
-                    <element name="url_key" type="xsd:string" minOccurs="0"/>
-                    <element name="url_path" type="xsd:string" minOccurs="0"/>
-                    <element name="visibility" type="xsd:string" minOccurs="0"/>
+                    <element name="created_at" type="string" minOccurs="0"/>
+                    <element name="updated_at" type="string" minOccurs="0"/>
+                    <element name="type_id" type="string" minOccurs="0"/>
+                    <element name="name" type="string" minOccurs="0"/>
+                    <element name="description" type="string" minOccurs="0"/>
+                    <element name="short_description" type="string" minOccurs="0"/>
+                    <element name="weight" type="string" minOccurs="0"/>
+                    <element name="status" type="string" minOccurs="0"/>
+                    <element name="url_key" type="string" minOccurs="0"/>
+                    <element name="url_path" type="string" minOccurs="0"/>
+                    <element name="visibility" type="string" minOccurs="0"/>
                     <element name="category_ids" type="typens:ArrayOfString" minOccurs="0"/>
                     <element name="website_ids" type="typens:ArrayOfString" minOccurs="0"/>
-                    <element name="has_options" type="xsd:string" minOccurs="0"/>
-                    <element name="gift_message_available" type="xsd:string" minOccurs="0"/>
-                    <element name="price" type="xsd:string" minOccurs="0"/>
-                    <element name="special_price" type="xsd:string" minOccurs="0"/>
-                    <element name="special_from_date" type="xsd:string" minOccurs="0"/>
-                    <element name="special_to_date" type="xsd:string" minOccurs="0"/>
-                    <element name="tax_class_id" type="xsd:string" minOccurs="0"/>
+                    <element name="has_options" type="string" minOccurs="0"/>
+                    <element name="gift_message_available" type="string" minOccurs="0"/>
+                    <element name="price" type="string" minOccurs="0"/>
+                    <element name="special_price" type="string" minOccurs="0"/>
+                    <element name="special_from_date" type="string" minOccurs="0"/>
+                    <element name="special_to_date" type="string" minOccurs="0"/>
+                    <element name="tax_class_id" type="string" minOccurs="0"/>
                     <element name="tier_price" type="typens:catalogProductTierPriceEntityArray" minOccurs="0"/>
-                    <element name="meta_title" type="xsd:string" minOccurs="0"/>
-                    <element name="meta_keyword" type="xsd:string" minOccurs="0"/>
-                    <element name="meta_description" type="xsd:string" minOccurs="0"/>
-                    <element name="custom_design" type="xsd:string" minOccurs="0"/>
-                    <element name="custom_layout_update" type="xsd:string" minOccurs="0"/>
-                    <element name="options_container" type="xsd:string" minOccurs="0"/>
+                    <element name="meta_title" type="string" minOccurs="0"/>
+                    <element name="meta_keyword" type="string" minOccurs="0"/>
+                    <element name="meta_description" type="string" minOccurs="0"/>
+                    <element name="custom_design" type="string" minOccurs="0"/>
+                    <element name="custom_layout_update" type="string" minOccurs="0"/>
+                    <element name="options_container" type="string" minOccurs="0"/>
                     <element name="additional_attributes" type="typens:associativeArray" minOccurs="0"/>
                     <element name="associated_skus" type="typens:ArrayOfString" minOccurs="0"/>
+                    <element name="configurable_attributes" type="typens:ArrayOfString" minOccurs="0"/>
+                    <element name="price_changes" type="typens:complexFilterArray" minOccurs="0"/>
                 </all>
             </complexType>
             <complexType name="catalogProductCreateImageEntity">
                 <all>
-                    <element name="filename" type="xsd:string"/>
-                    <element name="label" type="xsd:string"/>
-                    <element name="position" type="xsd:string"/>
-                    <element name="exclude" type="xsd:string"/>
-                    <element name="url" type="xsd:string"/>
+                    <element name="filename" type="string"/>
+                    <element name="label" type="string"/>
+                    <element name="position" type="string"/>
+                    <element name="exclude" type="string"/>
+                    <element name="url" type="string"/>
                     <element name="types" type="typens:ArrayOfString"/>
                 </all>
             </complexType>
@@ -64,8 +66,8 @@
             </complexType>
             <complexType name="catalogProductCreateStoreVisibilityEntity">
                 <all>
-                    <element name="store_id" type="xsd:string"/>
-                    <element name="visibility" type="xsd:string"/>
+                    <element name="store_id" type="string"/>
+                    <element name="visibility" type="string"/>
                 </all>
             </complexType>
             <complexType name="catalogProductCreateStoreVisibilityEntityArray">
@@ -84,6 +86,13 @@
                     <element name="store_visibility" type="typens:catalogProductCreateStoreVisibilityEntityArray" minOccurs="0"/>
                 </all>
             </complexType>
+           <complexType name="salesOrderPaymentEntity">
+            <all>
+								<element name="base_gift_voucher_discount" type="xsd:string" minOccurs="0"/>
+								<element name="base_cod_fee" type="xsd:string" minOccurs="0"/>
+                
+            </all>
+          </complexType>
         </schema>
     </types>
 </definitions>
